@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Microsoft Rewards</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 10px;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      .opened {
+        color: green;
+        font-weight: bold;
+      }
+      .not-opened {
+        color: red;
+      }
+    </style>
+    <script>
+      let words = [
+        "fakta unik tentang lautan", "rekomendasi anime slice of life", "manfaat minum air hangat",
+        "cara membuat kerajinan tangan mudah", "teknologi ramah lingkungan terbaru", "tempat camping terbaik di Indonesia",
+        "lagu indie Indonesia populer", "tips menjaga fokus saat belajar", "sejarah internet di dunia",
+        "desain logo minimalis canva", "resep makanan sehat untuk diet", "aplikasi pencatat keuangan pribadi",
+        "perbedaan cloud storage dan harddisk", "inspirasi gaya hidup minimalis", "cara membuat kopi tanpa mesin",
+        "kamera hp terbaik untuk fotografi", "fakta menarik tentang planet Mars", "jenis tanaman hias dalam ruangan",
+        "review headset gaming murah", "tutorial membuat video animasi", "game edukasi untuk anak-anak",
+        "penyebab perubahan iklim global", "cara membuat resume profesional", "alat musik tradisional Indonesia",
+        "lagu pengantar tidur yang menenangkan", "tips menghindari stres kerja", "sejarah perkembangan AI",
+        "film dokumenter terbaik sepanjang masa", "cara menulis novel untuk pemula", "kebiasaan baik sebelum tidur"
+      ];
+    </script>
+  </head>
+  <body style="display: flex;">
+    <div>
+      <br>
+      <button id="btn-search" onclick="start()">Mulai Pencarian</button>
+      <span id="loading-countdown"></span>
+      <br><br>
+      <span id="keyword"></span>
+      <br><br>
+      <table id="table-keywords" style="width:600px;max-width:1200px">
+        <thead>
+          <tr>
+            <th style="text-align:center;">No</th>
+            <th style="text-align:center;">Keyword</th>
+            <th style="text-align:center;">Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <br><br>
+    </div>
+    <div>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+    <div>
+      <h2 style="color: red;"> &nbsp;&nbsp; !!! SEFRUIT TUTORIAL !!!</h3>
+      <br>
+      <ol>
+        <li>
+            Untuk menghindari banned akun, ganti keyword setiap hari dengan copy prompt ini ke chatbot favorit kalian
+            <br><br>
+            <span style="background-color:aliceblue; text-align: justify; display: block;">
+            Gantilah array javascript yang berisi keyword dibawah ini dengan keyword baru berjumlah 40 tanpa definisi variable const, let, atau var
+            [ 
+            "sejarah komik jepang", "manfaat jalan kaki pagi", "tutorial desain poster canva",
+            "film animasi pixar terbaik", "game strategi offline", "cara membuat website portofolio",
+            "tempat wisata instagramable", "lagu akustik paling enak", "perbedaan AI dan manusia",
+            "sejarah sistem operasi windows", "kamera terbaik untuk traveling", "ide konten tiktok edukasi",
+            "resep makanan vegetarian mudah", "cara kerja mesin pencari", "buku pengembangan diri populer",
+            "tips menjaga kesehatan mental", "wallpaper aesthetic desktop", "fakta menarik tentang ruang angkasa",
+            "makanan khas jepang favorit", "aplikasi edit video ringan", "perbedaan UX dan UI design",
+            "cara membuat blog pribadi", "kebiasaan orang sukses di pagi hari", "tips belajar efektif saat malam",
+            "tempat wisata tersembunyi indonesia", "cara mempercepat koneksi internet", "review laptop 2025",
+            "tutorial python untuk pemula", "manfaat buah alpukat", "lagu barat romantis klasik"
+            ];
+            </span>
+            <br>
+        </li>
+        <li>
+          Setelah itu copykan hasil keyword terbaru yang berbentuk array dalam javascript ke sini dan klik "Ubah Keyword".<br><br>
+          <textarea id="list-new-keyword" cols="100%" rows="15"></textarea><br>
+          <button id="btn-change-keywords" onclick="changeKeywords()">Ubah Keyword</button>
+          <br><br>
+        </li>
+        <li>Pastikan isi tabel dan data keyword baru sudah sesuai.<br><br></li>
+        <li>Setelah selesai klik "Mulai Pencarian".<br><br></li>
+      </ol>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span style="font-style: italic; font-size: small; color:  red;">
+      *) Jika ingin mereset kembali ke keyword semula silahkan klik disini<br><br
+      </span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button id="btn-reset-keywords" onclick="resetKeywords()">Reset Keyword</button>
+      <br><br>
+    </div>
+    <div>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
+    <script>
+      // let jeda = 5000; jeda 5 detik
+      let jeda = Math.floor(Math.random() * (10000 - 6000 + 1)) + 6000; // jeda random antara 6 - 10 detik
+
+      let keywordStatus = [];
+      let i = 0;
+
+      const storedStatus = localStorage.getItem('keywordStatus');
+      const storedIndex = localStorage.getItem('currentIndex');
+
+      if (storedStatus && storedIndex) {
+        keywordStatus = JSON.parse(storedStatus);
+        i = parseInt(storedIndex, 10);
+      } else {
+        keywordStatus = words.map(word => ({ keyword: word, isOpened: false }));
+      }
+
+      showTable();
+
+      function start() {
+        if (i >= keywordStatus.length) {
+          alert("Semua keyword sudah dibuka.");
+          return;
+        }
+
+        disableButton();
+        keywordStatus[i].isOpened = true;
+
+        document.getElementById('keyword').innerHTML = 'Keyword ' + (i + 1) + ' : ' + keywordStatus[i].keyword;
+        // window.open(`https://www.bing.com/search?q=${encodeURIComponent(keywordStatus[i].keyword)}`, '_blank');
+        
+        const cvid = crypto.randomUUID(); // generate random cvid
+        window.open(`https://www.bing.com/search?q=${encodeURIComponent(words[i])}&FORM=QBLH&PC=LCTS&cvid=${cvid}&pglt=161`, '_blank');
+
+        i++;
+
+        localStorage.setItem('keywordStatus', JSON.stringify(keywordStatus));
+        localStorage.setItem('currentIndex', i);
+
+        showTable();
+      }
+
+      function enableButton() {
+        document.getElementById('btn-search').disabled = false;
+      }
+
+      function disableButton() {
+        document.getElementById('btn-search').disabled = true;
+        const countdownEl = document.getElementById('loading-countdown');
+        let seconds = Math.ceil(jeda / 1000);
+
+        countdownEl.textContent = `Tunggu ${seconds} detik...`;
+        const interval = setInterval(() => {
+          seconds--;
+          countdownEl.textContent = `Tunggu ${seconds} detik...`;
+          if (seconds <= 0) {
+            clearInterval(interval);
+            countdownEl.textContent = '';
+            enableButton();
+          }
+        }, 1000);
+      }
+
+      function showTable() {
+        const tableBody = document.querySelector("#table-keywords tbody");
+        tableBody.innerHTML = "";
+
+        keywordStatus.forEach((item, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td style="text-align:center;">${index + 1}</td>
+            <td>${item.keyword}</td>
+            <td class="${item.isOpened ? 'opened' : 'not-opened'}">
+              ${item.isOpened ? 'Sudah Dibuka' : 'Belum Dibuka'}
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      function changeKeywords(){
+        const input = document.getElementById("list-new-keyword").value;
+        
+        try {
+          const trimmed = input.trim();
+          if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) {
+            alert("Format array tidak valid!");
+            return;
+          }
+
+          const parsed = JSON.parse(trimmed);
+          if (!Array.isArray(parsed)) {
+            alert("Format array tidak valid!");
+            return;
+          }
+
+          if (parsed.length < 1) {
+            alert("Array harus punya lebih dari satu item!");
+            return;
+          }
+
+          // ganti list keywords existing
+          words = parsed;
+
+          // clear all session storage
+          localStorage.clear();
+          i = 0;
+          document.getElementById('keyword').innerHTML = '';
+          keywordStatus = words.map(word => ({ keyword: word, isOpened: false }));
+
+          showTable();
+
+        } catch (e) {
+          alert("Format array tidak valid!");
+          return;
+        }
+      }
+
+      function resetKeywords(){
+          // ganti list keywords existing
+          words = [
+            "fakta unik tentang lautan", "rekomendasi anime slice of life", "manfaat minum air hangat",
+            "cara membuat kerajinan tangan mudah", "teknologi ramah lingkungan terbaru", "tempat camping terbaik di Indonesia",
+            "lagu indie Indonesia populer", "tips menjaga fokus saat belajar", "sejarah internet di dunia",
+            "desain logo minimalis canva", "resep makanan sehat untuk diet", "aplikasi pencatat keuangan pribadi",
+            "perbedaan cloud storage dan harddisk", "inspirasi gaya hidup minimalis", "cara membuat kopi tanpa mesin",
+            "kamera hp terbaik untuk fotografi", "fakta menarik tentang planet Mars", "jenis tanaman hias dalam ruangan",
+            "review headset gaming murah", "tutorial membuat video animasi", "game edukasi untuk anak-anak",
+            "penyebab perubahan iklim global", "cara membuat resume profesional", "alat musik tradisional Indonesia",
+            "lagu pengantar tidur yang menenangkan", "tips menghindari stres kerja", "sejarah perkembangan AI",
+            "film dokumenter terbaik sepanjang masa", "cara menulis novel untuk pemula", "kebiasaan baik sebelum tidur"
+          ];
+
+          // clear all session storage
+          localStorage.clear();
+          i = 0;
+          document.getElementById('keyword').innerHTML = '';
+          keywordStatus = words.map(word => ({ keyword: word, isOpened: false }));
+
+          showTable();
+      }
+    </script>
+  </body>
+</html>
