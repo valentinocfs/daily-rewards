@@ -4,13 +4,12 @@
     <title>Daily Rewards</title>
     <link rel="stylesheet" href="style.css">
   </head>
-  <body style="display: flex;">
-    <div>
-      <br>
-      <button id="btn-search" onclick="start()">Mulai Pencarian</button>
+  <body style="display: flex; flex-direction: column;">
+    <div class="box">
+      <button id="btn-search" onclick="start()">Mulai Pencarian <span id="current-index-keyword">-</span>/<span id="total-keyword">-</span></button>
       &nbsp;&nbsp;&nbsp;<span id="loading-countdown"></span>
       <br><br>
-      <table id="table-keywords" style="width:600px;max-width:1200px;" cellpadding="0" cellspacing="0">
+      <table id="table-keywords" cellpadding="0" cellspacing="0">
       <thead>
           <tr>
             <th style="text-align:center;">No</th>
@@ -20,13 +19,14 @@
         </thead>
         <tbody></tbody>
       </table>
-      <br><br>
-      <button id="btn-generate-manual" onclick="generateKeywordManual()">Generate Keyword</button>
-      <button id="btn-generate-ai" onclick="generateKeyword()">Generate Keyword (AI)</button>
-      <button type="button"><a href="https://www.bing.com/news" target="_blank" class="text-href">Baca Artikel/Berita</a></button>
-      <br><br>
+      <br>
+      <button id="btn-generate-manual" style="text-align: right;" onclick="generateKeywordManual()">Generate Keyword Baru</button>
       <span id="loading-keyword"></span>
+    </div>
+    <div class="box">
+      <button type="button" onclick="startSearchNews()">Baca Artikel/Berita</button>
       <br><br>
+      🔥🔥 Still cooking… greatness takes time. 🔥🔥
     </div>
     <script src="keywords_bank.js"></script>
     <script src="script.js"></script>
