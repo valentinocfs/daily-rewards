@@ -27,3 +27,11 @@ button {
   text-decoration: none;
   color: black;
 }
+.box {
+  margin: 16px;
+  padding: 32px;
+  border: 1px solid black;
+  width: 600px;
+  max-width:1200px;
+  border-radius: 4px;
+}
