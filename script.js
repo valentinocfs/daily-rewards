@@ -1,5 +1,4 @@
-// let jeda = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
-let jeda = 0; // jeda random antara 5 - 7 detik
+let jeda = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
 let keywordStatus = [];
 let i = 0;
 const storedStatus = localStorage.getItem('keywordStatus');
