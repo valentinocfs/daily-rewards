@@ -24,11 +24,25 @@
       <span id="loading-keyword"></span>
     </div>
     <div class="box">
-      <button type="button" onclick="startSearchNews()">Baca Artikel/Berita</button>
+      <button id="btn-search-article" onclick="startSearchNews()">Baca Artikel/Berita <span id="current-index-article">-</span>/<span id="total-article">-</span></button>
+      &nbsp;&nbsp;&nbsp;<span id="loading-countdown-article"></span>
       <br><br>
-      🔥🔥 Still cooking… greatness takes time. 🔥🔥
+      <table id="table-articles" cellpadding="0" cellspacing="0">
+      <thead>
+          <tr>
+            <th style="text-align:center;">No</th>
+            <th style="text-align:center;">Artikel/Berita</th>
+            <th style="text-align:center;">Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <br>
+      <button id="btn-generate-manual-article" style="text-align: right;" onclick="generateArticlesManual()">Generate Artikel/Berita Baru</button>
+      <span id="loading-article"></span>
     </div>
     <script src="keywords_bank.js"></script>
+    <script src="news_bank.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -33,5 +33,6 @@ button {
   border: 1px solid black;
   width: 600px;
   max-width:1200px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
+  /* box-shadow: 8px 12px 1px 2px rgb(56, 51, 51); */
 }

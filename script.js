@@ -1,13 +1,16 @@
-let jeda = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
+let jeda = Math.floor(Math.random() * (6000 - 4000 + 1)) + 4000; // jeda random antara 4 - 6 detik
+let jedaArticle = Math.floor(Math.random() * (7000 - 5000 + 1)) + 4000; // jeda random antara 5 - 7 detik
+
+// KEYWORD
 let keywordStatus = [];
 let i = 0;
-const storedStatus = localStorage.getItem('keywordStatus');
-const storedIndex = localStorage.getItem('currentIndex');
+const storedKeywordStatus = localStorage.getItem('keywordStatus');
+const storedKeywordIndex = localStorage.getItem('currentIndex');
 let words = [];
 
-if (storedStatus && storedIndex) {
-  keywordStatus = JSON.parse(storedStatus);
-  i = parseInt(storedIndex, 10);
+if (storedKeywordStatus && storedKeywordIndex) {
+  keywordStatus = JSON.parse(storedKeywordStatus);
+  i = parseInt(storedKeywordIndex, 10);
   showTable();
 } else {
   keywordStatus = words.map(word => ({ keyword: word, isOpened: false }));
@@ -108,96 +111,6 @@ function showTable() {
   }
 }
 
-async function generateKeywordAI() {
-  // block request per hari
-  let storedDateGenerate = localStorage.getItem('generatekeywordai');
-  if(storedDateGenerate){
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // jam 00:00:00
-    const storedDate = new Date(storedDateGenerate);
-    const storedDay = new Date(storedDate.getFullYear(), storedDate.getMonth(), storedDate.getDate());
-    // jika stored date >= hari ini (sudah pernah request hari ini atau masa depan)
-    if (storedDay.getTime() >= today.getTime()) {
-      alert("Generate Keyword AI hanya bisa dilakukan 1x per hari.");
-      return false;
-    }
-  }
-
-  const message = `Gantikan semua array javascript yang berisi keyword dibawah ini dan jangan dipakai lagi untuk isi array yang baru. Ganti keyword dengan jumlah 35 jangan sampai lebih atau kurang dan berikan array tanpa definisi variable const, let, atau var. Berikan hasilnya saja tanpa penjelasan atau konteks dan respon dalam bentuk array saja. ["sejarah komik jepang", "manfaat jalan kaki pagi", "tutorial desain poster canva"]`;
-
-  const loading = document.getElementById('loading-keyword');
-  loading.innerHTML = 'Tunggu beberapa saat...';
-
-  const btnGenerateAi = document.getElementById('btn-generate-ai');
-  const btnGenerateManual = document.getElementById('btn-generate-manual');
-
-  btnGenerateAi.disabled = true;
-  btnGenerateManual.disabled = true;
-
-  const API_TOKEN = '';
-
-  try {
-    const response = await fetch(
-      'https://openrouter.ai/api/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + API_TOKEN,
-          'HTTP-Referer': 'https://valentinocfs.github.io/daily-rewards/',
-          'X-Title': 'Daily Rewards',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'deepseek/deepseek-r1:free',
-          messages: [{ role: 'user', content: message }],
-        }),
-      },
-    );
-    const data = await response.json();
-    const result = data.choices?.[0]?.message?.content || 'No response received.';
-
-    if(result == 'No response received.'){
-      loading.innerHTML = result;
-      return false; 
-    }
-    loading.innerHTML = '';
-
-    if (!result.startsWith("[") || !result.endsWith("]")) {
-      alert("Format array tidak valid!");
-      return;
-    }
-
-    const parsed = JSON.parse(result);
-    if (!Array.isArray(parsed)) {
-      alert("Format array tidak valid!");
-      return;
-    }
-
-    words = parsed;
-
-    // clear stored keyword
-    localStorage.removeItem('keywordStatus');
-    localStorage.removeItem('currentIndex');
-    
-
-    i = 0;
-    keywordStatus = words.map(word => ({ keyword: word, isOpened: false }));
-
-    localStorage.setItem('keywordStatus', JSON.stringify(keywordStatus));
-    localStorage.setItem('currentIndex', i);
-
-    showTable();
-
-    localStorage.setItem('generatekeywordai', new Date());
-    
-  } catch (error) {
-    loading.innerHTML = '<span style="color:red">Error: ' + error.message + ' </span>';
-  } finally {
-    btnGenerateAi.disabled = false;
-    btnGenerateManual.disabled = false;
-  }
-}
-
 function generateKeywordManual(){
   // clear all keywords
   words = [];
@@ -240,6 +153,156 @@ function generateKeywordManual(){
   btnGenerateManual.disabled = false;
 }
 
+// ARTICLE/NEWS
+let articleStatus = [];
+let idx = 0;
+let idxParam = 2;
+
+const storedArticleStatus = localStorage.getItem('articleStatus');
+const storedArticleIndex = localStorage.getItem('currentIndexArticle');
+let articles = [];
+
+if (storedArticleStatus && storedArticleIndex) {
+  articleStatus = JSON.parse(storedArticleStatus);
+  idx = parseInt(storedArticleIndex, 10);
+  showTableArticles();
+} else {
+  articleStatus = articles.map(article => ({ article: article, uniqueID: idxParam+2, isOpened: false }));
+  generateArticlesManual()
+}
+
+document.getElementById('current-index-article').innerHTML = idx;
+document.getElementById('total-article').innerHTML = articleStatus.length;
+
 function startSearchNews(){
-  window.open(`https://www.bing.com/news`, '_blank');
+  if (idx >= articleStatus.length) {
+    alert("Semua artikel/berita sudah dibuka. Silakan melakukan generate artikel/berita baru!");
+    return;
+  }
+
+  disableButtonArticle();
+  articleStatus[idx].isOpened = true;
+
+  const cvid = crypto.randomUUID(); // generate random cvid
+  const device = isMobile() ? "hpmsn" : "windirect";
+  
+  window.open(`https://www.msn.com/en-xl/${articleStatus[i].article}?ocid=${device}&cvid=${cvid}&ei=${articleStatus[idx].uniqueID}`, '_blank');
+
+  idx++;
+
+  document.getElementById('current-index-article').innerHTML = idx;
+  document.getElementById('total-article').innerHTML = articleStatus.length;
+
+  localStorage.setItem('articleStatus', JSON.stringify(articleStatus));
+  localStorage.setItem('currentIndexArticle', idx);
+
+  showTableArticles();
+}
+
+function enableButtonArticle() {
+  document.getElementById('btn-search-article').disabled = false;
+}
+
+function disableButtonArticle() {
+  document.getElementById('btn-search-article').disabled = true;
+  const countdownEl = document.getElementById('loading-countdown-article');
+  let seconds = Math.ceil(jedaArticle / 1000);
+
+  countdownEl.textContent = `Tunggu ${seconds} detik...`;
+  const interval = setInterval(() => {
+    seconds--;
+    countdownEl.textContent = `Tunggu ${seconds} detik...`;
+    if (seconds <= 0) {
+      clearInterval(interval);
+      countdownEl.textContent = '';
+      enableButtonArticle();
+    }
+  }, 1000);
+}
+
+function showTableArticles() {
+  const tableBody = document.querySelector("#table-articles tbody");
+  tableBody.innerHTML = "";
+
+  const rawIndex = idx;
+  const currentIndex = rawIndex !== null ? parseInt(rawIndex, 10) : NaN;
+  if (isNaN(currentIndex)) return;
+
+  
+  let slice = (rawIndex == 1 ? 4 : 3);
+  let start = Math.max(0, currentIndex - 1);
+  let end = Math.min(articleStatus.length, currentIndex + slice);
+  if(rawIndex == 0){
+    start = Math.max(0, currentIndex - 1);
+    end = Math.min(articleStatus.length, currentIndex + 5);
+  }
+
+  if(rawIndex > articleStatus.length - slice){
+    start = articleStatus.length - slice - 1;
+  }
+  
+  if(rawIndex > 1){
+    const dotsRow = document.createElement("tr");
+    dotsRow.innerHTML = `<td colspan="3" style="text-align:center;">...</td>`;
+    tableBody.appendChild(dotsRow);
+  }
+
+  const visibleItems = articleStatus.slice(start, end);
+  visibleItems.forEach((item, i) => {
+    const row = document.createElement("tr");
+    const urlPart = item.article.split("/");
+    const titleSlug = urlPart[urlPart.length - 2] || '';
+    const title = (() => {
+      let t = titleSlug.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      return t.length > 50 ? t.slice(0, 50) + "..." : t;
+    })();
+    row.innerHTML = `
+      <td style="text-align:center;">${start + i + 1}</td>
+      <td>${title}</td>
+      <td class="${item.isOpened ? 'opened' : 'not-opened'}">
+        ${item.isOpened ? 'Sudah Dibuka' : 'Belum Dibuka'}
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  if((rawIndex == 0 || rawIndex >= 1) && (rawIndex < articleStatus.length - slice)){
+    const dotsRow = document.createElement("tr");
+    dotsRow.innerHTML = `<td colspan="3" style="text-align:center;">...</td>`;
+    tableBody.appendChild(dotsRow);
+  }
+}
+
+function generateArticlesManual(){
+  // clear all articles
+  articles = [];
+
+  const btnGenerateManual = document.getElementById('btn-generate-manual-article');
+
+  btnGenerateManual.disabled = true;
+
+  const allUnique = [...new Set(news_bank)];
+  const shuffled = allUnique.sort(() => Math.random() - 0.5);
+  const news = shuffled.slice(0, 15);
+
+  // clear stored keyword
+  localStorage.removeItem('articleStatus');
+  localStorage.removeItem('currentIndexArticle');
+
+  idx = 0;
+  idxParam = 2;
+  articleStatus = news.map(article => ({ article: article, uniqueID: idxParam+2, isOpened: false }));
+
+  localStorage.setItem('articleStatus', JSON.stringify(articleStatus));
+  localStorage.setItem('currentIndexArticle', idx);
+
+  document.getElementById('current-index-article').innerHTML = idx;
+  document.getElementById('total-article').innerHTML = articleStatus.length;
+
+  showTableArticles();
+  btnGenerateManual.disabled = false;
+}
+
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
