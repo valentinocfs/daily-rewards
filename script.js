@@ -1,6 +1,6 @@
- if (!localStorage.getItem("storageCleared")) {
-  localStorage.clear(); // hapus semua
-  localStorage.setItem("storageCleared", "true");
+ if (!localStorage.getItem("clearstorage")) {
+  localStorage.clear();
+  localStorage.setItem("clearstorage", "true");
 }
 
 let jeda = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
@@ -192,7 +192,8 @@ function startSearchNews(){
   const cvid = crypto.randomUUID(); // generate random cvid
   const device = isMobile() ? "hpmsn" : "windirect";
   
-  window.open(`https://www.msn.com/en-xl/${articleStatus[i].article}?ocid=${device}&cvid=${cvid}&ei=${articleStatus[idx].uniqueID}`, '_blank');
+  let newsURL = `https://www.msn.com/${articleStatus[i].article}?ocid=${device}&cvid=${cvid}&ei=${articleStatus[idx].uniqueID}`;
+  window.open(newsURL, '_blank');
 
   idx++;
 
