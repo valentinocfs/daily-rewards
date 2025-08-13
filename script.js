@@ -1,5 +1,11 @@
-let jeda = Math.floor(Math.random() * (6000 - 4000 + 1)) + 4000; // jeda random antara 4 - 6 detik
-let jedaArticle = Math.floor(Math.random() * (7000 - 5000 + 1)) + 4000; // jeda random antara 5 - 7 detik
+ if (!localStorage.getItem("storageCleared")) {
+  localStorage.clear(); // hapus semua
+  localStorage.setItem("storageCleared", "true");
+}
+
+let jeda = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
+let jedaArticle = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
+
 
 // KEYWORD
 let keywordStatus = [];
