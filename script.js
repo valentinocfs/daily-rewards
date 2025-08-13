@@ -1,11 +1,11 @@
- if (!localStorage.getItem("clearstorage")) {
+const version = "1.0.1";
+if (!localStorage.getItem("version") || (localStorage.getItem("version") != version)) {
   localStorage.clear();
-  localStorage.setItem("clearstorage", "true");
+  localStorage.setItem("version", version);
 }
 
 let jeda = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
 let jedaArticle = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000; // jeda random antara 5 - 7 detik
-
 
 // KEYWORD
 let keywordStatus = [];
@@ -192,7 +192,7 @@ function startSearchNews(){
   const cvid = crypto.randomUUID(); // generate random cvid
   const device = isMobile() ? "hpmsn" : "windirect";
   
-  let newsURL = `https://www.msn.com/${articleStatus[i].article}?ocid=${device}&cvid=${cvid}&ei=${articleStatus[idx].uniqueID}`;
+  let newsURL = `https://www.msn.com/${articleStatus[idx].article}?ocid=${device}&cvid=${cvid}&ei=${articleStatus[idx].uniqueID}`;
   window.open(newsURL, '_blank');
 
   idx++;
